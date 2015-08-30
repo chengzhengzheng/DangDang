@@ -1,0 +1,280 @@
+本项目采用struts2+jdbc+jsp开发而成
+
+其中页面层使用jsp技术、
+其中前端使用了JavaScript技术对邮箱。用户名是否合法进行了
+客户端验证、而使用ajax技术异步和服务器端进行通信、以此来验证用户名和邮箱是否已经
+注册过了、这样做的好处是不影响用户的操作其他的、页面只是局部刷新、不会抛弃整个页面
+该技术的本质通过浏览器内置的一个对象(XmlHttpRequest)异步地向服务器发送请求，现在jquery
+框架已经支持ajax操作、这样发送ajax请求将变的十分方便
+
+页面的form表单或者带有参数的<a href=>向服务器发送一个http请求的时候、在web.xml
+中配置将所有的请求交给struts2框架进行处理、struts2框架的核心控制器是一个filter
+在struts2.0中叫FilterDispatcher，在struts2.1中叫StrutsPrepareAndExecuteFilter。
+这个控制器参照一个struts。xml文件将请求映射给一个个action进行处理、其中struts2不同于
+struts1直接将请求参数封装到action之中、Struts2提供了类型转换器、我们可以把特殊的请求参数
+转换成需要的类型、在Struts1中如果要实现同样的功能呢过、就必须向Struts1的底层实现
+BeanUtil注册类型转换器才行；这个过程struts2是使用拦截器帮助我们完成的、
+在action中我们调用业务逻辑service对请求参数进行CURD操作、返回一个字符串、此时strust2
+根据返回的字符串在action的子配置Result当中找到对应的字符串、根据Result配置
+具体选择是forword到另一个页面还是Redirect到另一个地址、至此完成一个完整的请求响应过程
+
+用到的技术：
+1、在用户调用我的购物车的时候、我们首先要写一个拦截器、这个拦截器用来进行用户权限检测
+写一个普通的CheckLoginIntercepter继承AbstractInterceptor、重写它的intercept方法、
+在这个方法当中我们进行权限检查、然后我们在action配置里面的第一个配置项
+配置好这个拦截器、至此如果一个请求被转发到这个action当中
+就会先执行拦截器中的方法、如果方法通过就会继续执行、如果没有通过就会跳到指定的页面(有intercept方法指定)
+2、数据库连接池技术
+编写DBUtil这个类封装了获取数据库连接Connection的工厂、这个类的编写首先根据db.properties
+来创建数据源dataSource、此类利用ThreadLocal对象使得Connection连接对象
+在线程内是单例的、也就是说在同一个线程内部只有一个线程、线程内部共享数据
+3、此外为了体现面向接口编程的思想、同时为了降低组建于组建之间的耦合性、我们使用了
+工厂方法在service中获取dao实例、当然如果使用spring、spring提供的依赖注入、IOC容器
+比工厂方法更好、在action中我们只需要利用工厂就可以得到不同的dao实例、从一定程度
+上来说降低了组件与组件之间的耦合度
+4、在页面表现层上我们使用了struts2为我们提供的ognl对象图导航语言、使用ognl对象图
+导航语言可以很方便的方位valueStack中的数据、因为根据struts2的设计当前的action放在
+栈顶、这样我们就可以很方便的在jsp页面中方位action中的属性值了、
+5、另外此项目最后为了提高性能、我自己模仿hibernate使用hashMap实现了一个简易版的缓存模块、
+将主页面那些热销书放入缓存当中、这样当下次再要使用这些书的时候、我们就可以直接从
+缓存中拿去数据、免得和数据库进行交互浪费性能
+6、在主页面当中我们使用了数据分页技术、因为我使用的是mysql数据库、
+mysql数据库limit进行分页技术、而在oracle使用rownum实现分页技术
+7、其中还有一些比如struts2当中的DMI远程方法调用等等技术
+
+
+
+学生宿舍管理系统：
+spring+jdbc+strust2开发而成
+当启动tomcat服务器的时候由于web.xml当中配置了一个listen监听器、此时tomcat容器根据
+listen的配置启动spring容器、spring容器根据content-param的配置找到spring的配置文件
+根据配置文件将创建beanFacotry利用dom4j解析xml文件、将xml文件的层次关系读取成
+beanFactory的一个个对象属性、此时spring配置文件当中的组件就会被spring容器管理起来
+spring容器负责这些组件的生命周期、spring中的控制反转也是依靠spring容器来实现的
+
+在web.xml当中还配置了struts的过滤器、根据配置每一个请求都会交给struts2来进行处理
+struts2根据请求路径将请求映射到不同的action中进行处理、处理完成之后返回Result中锁配置
+的页面
+
+IOC容器的使用、在action中注入service组件
+					在service组件当中注入dao组件
+这样就不需要我们自己去new对象、而是使用依赖注入的方式、在运行期间动态的为
+service或者action注入配置文件中配置的组件、降低了组件与组件之间的耦合性、扩展性更好
+在进行权限检查的时候使用struts2当中的拦截器功能、struts2当中的拦截器
+大量使用了环绕通知、特别适合做权限检查
+
+
+spirng对jdbc进行了一层封装、简化了我们对jdbc的操作、但是必须在sprng的配置文件当中
+配置数据源dataSource、并且继承JdbcDaoSupport我们使用this.jdbcTm
+
+SmartStruts项目说明：
+
+此项目为学习完struts1之后、在学习了java高级知识之后、随性而写
+
+其实此框架类似于struts1实际上是一个大大的servlet、在web.xml当中
+将所有的http请求交个这个大大的servlet进行处理、当第一个请求过来的时候、
+根据web.xml当中的配置将请求交给servlet、tomcat容器负责创建这个servlet
+实例化servlet调用servlet的init方法、在这个servlet的init方法里面、我们读取了smart-struts.xml的配置文件
+其中读取smart-struts.xml配置文件的时候使用 commons-digester-1.8这个第三方工具类
+这个工具类根据rule.xml中的规定解析用户配置的xml文件、将用户配置的xml文件
+解析、将解析到的dom对象封装到MoudleConfig对象工厂当中、这里的xml解析器相当于
+一个容器、而容器的最顶层存放的是MoudleConfig对象、将xml配置当中的action构造成一个ActionConifg
+对象放入MoudleConfig对象当中、根据xml配置当中的formbean构造一个formBeanConfig对象
+将次对象放入action当中、实际上就是讲xml的dom树用面向对象的语言表现出来、
+
+当一个请求到来的时候、交个框架进行处理、框架解析请求参数、根据path属性在moudleConfig
+中找到对应的action、根据action配置找到对应formbean实例化formbean、这里使用的
+反射Class.formName方法将请求参数封装到formbean当中
+因为提交上来的请求参数都是string类型的而实际类型不一定都是string、因此在这里我们使用了一个被称为
+commons-beanutils-1.8.0.jar这个第三方工具类完成将请求参数封装到formbean当中
+完成类型的转化、然后根据action的type属性找到对应的action并且利用反射进行实例化
+在action中传入刚才实例化的formbean以及request和response对象、将他们传递给action的execute
+方法、action处理后返回一个forword对象、此时从当前的actionConfig找到对应的forword
+对象根据forword的配置选择跳转到的页面
+
+=======================介绍struts1月struts2的区别===============
+1、在软件设计上Struts2没有像struts1那样跟Servlet API和Struts API有着
+紧密的耦合、Struts2的应用可以不依赖Servlet API和Struts API、Struts2这种设计属于
+无侵入式的设计、而Struts1的设计属于浸入式设计
+2、Struts2提供了拦截器、利用拦截器可以进行AOP编程，例如实现权限拦截功能
+3、Struts2提供了类型转换器、我们可以把特殊的请求参数
+转换成需要的类型、在Struts1中如果要实现同样的功能呢过、就必须向Struts1的底层实现
+BeanUtil注册类型转换器才行；
+4、Struts2提供了多种表现层技术、如JSP freeMarker velocity
+5、Struts2的输入验证可以对指定的方法进行校验、而Struts1只能对Action中的所有方法进行校验
+6、提供了全局范围、包范围和Action范围的国际化资源文件管理实现
+7、与Struts1不同，Struts2对用户的每一次请求都会创建一个Action，
+所以Struts2中的Action是线程安全的
+8、给我印象最深刻的是：struts配置文件中的redirect视图的url不能接受参数，
+而struts2配置文件中的redirect视图可以接受参数。
+9、 Struts 的Action必需是thread－safe方式，它仅仅允许一个实例去处理所有的请求。所以action用到的所有的资源都必需统一同步，
+这个就引起了线程安全的问题。
+10、 Struts 的Action必需是thread－safe方式，它仅仅允许一个实例去处理所有的请求。所以action用到的所有的资源都必需统一同步，
+这个就引起了线程安全的问题。
+11、五、	对Servlet的依赖性过强. Struts处理Action时必需要依赖ServletRequest 和ServletResponse，
+所有它摆脱不了Servlet容器。 
+================说说你对struts2的理解=============
+
+1. struts是一个按MVC模式设计的Web层框架，其实它就是一个大大的servlet，这个Servlet名为ActionServlet，
+或是ActionServlet的子类。我们可以在web.xml文件中将符合某种特征的所有请求交给这个Servlet处理，
+这个Servlet再参照一个配置文件（通常为/WEB-INF/struts-config.xml）将各个请求分别分配给不同的action去处理。
+一个扩展知识点：struts的配置文件可以有多个，可以按模块配置各自的配置文件，这样可以防止配置文件的过度膨胀；
+2. ActionServlet把请求交给action去处理之前，会将请求参数封装成一个formbean对象（就是一个java类，
+这个类中的每个属性对应一个请求参数），封装成一个什么样的formbean对象呢？看配置文件。
+3.要说明的是， ActionServlet把formbean对象传递给action的execute方法之前，可能会调用formbean的validate方法进行校验，
+只有校验通过后才将这个formbean对象传递给action的execute方法，否则，它将返回一个错误页面，这个错误页面由input属性指定，
+（看配置文件）作者为什么将这里命名为input属性，而不是error属性，我们后面结合实际的运行效果进行分析。
+4.action执行完后要返回显示的结果视图，这个结果视图是用一个ActionForward对象来表示的，actionforward对象通过
+struts-config.xml配置文件中的配置关联到某个jsp页面，因为程序中使用的是在struts-config.xml配置文件为jsp页面设置的逻辑名
+，这样可以实现action程序代码与返回的jsp页面名称的解耦。
+
+===========谈谈你对spring的理解===========
+
+1.Spring实现了工厂模式的工厂类（在这里有必要解释清楚什么是工厂模），这个类名为BeanFactory（实际上是一个接口），
+在程序中通常BeanFactory的子类ApplicationContext。Spring相当于一个大的工厂类，在其配置文件中通过<bean>元素配置
+用于创建实例对象的类名和实例对象的属性。
+2、在web.xml当中注册监听器、当服务器启动的时候、读取spring的配置文件、将配置文件配置的bean对象纳入spring的容器
+当中、这样spring就对这些bean组件拥有了管理权限
+2. Spring提供了对IOC良好支持，IOC是一种编程思想，是一种架构艺术，利用这种思想可以很好地实现模块之间的解耦。
+IOC也称为DI（Depency Injection），什么叫依赖注入呢？
+=====依赖注入=========
+所为控制反转、就是应用本身不负责以来对象的创建
+以及维护、依赖对象的创建以及维护是由外部容器负责的
+这样控制权就由应用转移到了外部容器之中spring容器当中、
+控制权的转移就是所谓的反转、运行期间、由外部容器动态将对象注入到组件之中
+=======================
+==========================Spring的DI是什么===========================
+依赖注入（Dependecy Injection）和控制反转（Inversion of Control）是同一个概念，具体的讲：当某个角色
+需要另外一个角色协助的时候，在传统的程序设计过程中，通常由调用者来创建被调用者的实例。但在spring中
+创建被调用者的工作不再由调用者来完成，因此称为控制反转。创建被调用者的工作由spring来完成，然后注入调用者
+因此也称为依赖注入。spring以动态灵活的方式来管理对象 ， 注入的两种方式，设置注入和构造注入。
+设置注入的优点：直观，自然构造注入的优点：可以在构造器中决定依赖关系的顺序。
+
+另外两种方式都由依赖，第一个直接依赖于目标类，第二个把依赖转移到工厂上，第三个彻底与目标和工厂解耦了。
+在spring的配置文件中配置片段如下：
+这样做的好处是降低了组件与组件之间的耦合度、服务层通过接口引用外部的dao组件
+有spring容器在运行期间动态的为组件注入实例对象
+4、spring容器为我们提供了众多的基础服务、例如、事务管理、单例模式、
+
+==========谈谈spring aop==========
+3. Spring提供了对AOP技术的良好封装， AOP称为面向切面编程，就是系统中有很多各不相干的类的方法，
+在这些众多方法中要加入某种系统功能的代码，已达到增强这些方法的效果、来完成一些包装的功能、
+例如，加入日志，加入权限判断，加入异常处理，这种应用称为AOP。实现AOP功能采用的是代理技术，
+客户端程序不再调用目标，而调用代理类，代理类与目标类对外具有相同的方法声明，有两种方式可以实现相同的方法声明，
+一是实现相同的接口，
+二是作为目标的子类在，JDK中采用Proxy类产生动态代理的方式为某个接口生成实现类，
+如果要为某个类生成子类，则可以用CGLI B。在生成的代理类的方法中加入系统功能和调用目标类的相应方法，
+系统功能的代理以Advice对象进行提供，显然要创建出代理对象，至少需要目标类和Advice类。spring提供了这种支持，
+只需要在spring配置文件中配置这两个元素即可实现代理和aop功能，例
+如果目标对象实现了接口、则使用JDK自带的产生代理的方法产生对象的代理类、如果没有实现接口
+则使用cglib的方式产生代理对象
+
+
+
+解释什么是方面：贯穿到系统的各个模块中的系统一个功能就是一个方面，
+比如，记录日志，统一异常处理，事务处理，全限检查，这些功能都是软件系统
+的一个面，而不是一点，在各个模块中都要出现。
+3.什么是面向方面编程：把系统的一个方面的功能封装成对象的形式来处理
+4.怎么进行面向方面编程：把功能模块对应的对象作为切面嵌入到原来的各个系统模块中，
+采用代理技术，代理会调用目标，同时把切面功能的代码（对象）加入进来，所以，
+用spring配置代理对象时只要要配两个属性，分别表示目标和切面对象（Advisor）。
+==========我对买你想切面编程的理解==========
+就是本来面向对象封装的是一个类、这个类是模拟显示实际真是存在的事务、而面向切面编程也是封装的应用、只不过
+它封装的是一个代码块、封装的是一个一个功能模块、系统的一个方面的功能封装成对象的形式来处理、比如、日志系统、权限检查
+将他们封装成一个对象、在需要进行这些功能操作的地方只需要引用这些功能模块就可以了、降低了组件之间的耦合度
+加入没有面向切面编程、我们在进行日志记录的时候、就需要将日志记录代码写死在程序中、这样一方面不利于代码的重用、
+另一方面不利于扩展和维护、采取了aop编程我们可以将这些功能模块引入到需要的地方种去、实现aop编程使用代理技术
+代理会调用目标方法、在调用目标方法之前之后、分别采取不同的操作、以实现控制方法的执行过程；
+
+===============使用jdbc查询学生代码实现=======
+public class JdbcTest {
+	PreparedStatement prep = null;
+	Connection conn = null;
+	ResultSet rs = null;
+	{
+		try {
+			Class.forName("com.mysql.jdbc.DriverManager");
+			conn = DriverManager.getConnection("url", "", "");
+			prep = conn.prepareStatement("select * from student");
+			prep.setString(0, "cz");
+			rs = prep.executeQuery();
+			while(rs.next()){
+				//........
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			try{
+				if(rs!=null) rs.close();
+				if(prep != null) prep.close();
+				if(conn != null)conn.close();
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+	}
+}
+=============分页查询=========
+mysql：
+	select * from student order by id limit size*(pageNumber - 1),size;
+oracle:
+	String sql = "select * from " (select *,rownum rid from 
+	(select * from students order by postime desc) where rid<=" + pagesize*pagenumber + ")
+	 as t" "where t>" + pageSize*(pageNumber-1);
+
+
+
+======================接口和抽象类的区别在设计上的区别===============
+接口更多的是在系统架构设计方法发挥作用，主要用于定义模块之间的通信契约。而抽象类在代码实现方面发挥作用，
+可以实现代码的重用，例如，模板方法设计模式是抽象类的一个典型应用，假设某个项目的所有Servlet类都要用相同的
+方式进行权限判断、记录访问日志和处理异常，那么就可以定义一个抽象的基类，让所有的Servlet都继承这个抽象基类，
+在抽象基类的service方法中完成权限判断、记录访问日志和处理异常的代码，在各个子类中只是完成各自的业务逻辑代码，伪代码如下：
+public abstract class BaseServlet extends HttpServlet{
+		public final void service(HttpServletRequest request, HttpServletResponse response) 
+		throws IOExcetion,ServletException
+		{
+			记录访问日志
+			进行权限判断
+			if(具有权限){
+				try{
+					doService(request,response);
+				}catch(Excetpion e){
+						记录异常信息
+				}
+			}
+		} 
+		protected abstract void doService(HttpServletRequest request, HttpServletResponse response) 
+		throws IOExcetion,ServletException;  
+//注意访问权限定义成protected，显得既专业，又严谨，因为它是专门给子类用的
+}
+public class MyServlet1 extends BaseServlet{
+       protected void doService(HttpServletRequest request, HttpServletResponse response) 
+       throws IOExcetion,ServletException{
+			本Servlet只处理的具体业务逻辑代码
+		} 
+}
+父类方法中间的某段代码不确定，留给子类干，就用模板方法设计模式。
+备注：这道题的思路是先从总体解释抽象类和接口的基本概念，然后再比较两者的语法细节，最后再说两者的应用区别。
+比较两者语法细节区别的条理是：先从一个类中的构造方法、普通成员变量和方法（包括抽象方法），静态变量和方法，
+继承性等6个方面逐一去比较回答，接着从第三者继承的角度的回答，特别是最后用了一个典型的例子来展现自己深厚的技术功底。
+
+===================说说你对struts的理解？=======================
+从actionservlet->到action、然后再是formbean、燃火再是actionforword最后是一些表现层的东东；
+	Struts是一个遵循了MVC模式的WEB层框架、说白了、它就是一个大大的Servlet、
+	这个servlet的名字叫ActionServlet在web.xml
+	文件当中把某一些请求映射到这个servlet、通常是(.do
+	的形式、也就是映射给了struts框架、当这个ActionServlet
+	接受请求之后、它将把这个请求交给一个Action处理、不同的请求交个不同的action进行处理、一个
+	请求路径到底对应哪个action、这是要在struts-config.xml中配置的、struts-config.xml的名称和路
+	径可以再ActionServlet的参数中进行配置、并且可以配置多个文件、以逗号分割开来、这样的好处是可以防止配置
+	文件的过度膨胀
+ActionServlet把请求交给Action之前、会把请求参数封装成一个formbean对象、当formbean校验有问题的时候、
+就会返回一个错误页面、这个错误页面由inupt属性指定、也可以让它不校验、validate默认值为true、可以设置为false;
+当没有问题的时候、才传递个Action进行处理
+Action处理后返回的结果视图结果用一个ActionForward对象表示、actionforward对象通过struts-config.xml
+配置文件中的配置关联到某个jsp页面
+为程序中使用的是在struts-config.xml配置文件
+为jsp页面设置的逻辑名、这样可以实现action程序代码与返回的jsp页面名称的解耦、
+此外、Struts中提供了一些国际haunt的支持和一些非常方百年的标签、使得一些页面的开发任务得到了简化
+
+

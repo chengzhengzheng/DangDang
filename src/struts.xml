@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+    "http://struts.apache.org/dtds/struts-2.1.7.dtd">
+<struts>
+	<include file="struts-user.xml"/>
+	<include file="struts-order.xml"/>
+	<include file="struts-cart.xml"/>
+	<include file="struts-main.xml"/>
+	<package name="dang-Default" extends="json-default">
+		<interceptors>
+			<interceptor name="transaction" class="com.tarena.dang.interceptor.TransactionInterceptor"/>		
+			<interceptor-stack name="dangStack">
+				<interceptor-ref name="transaction"/>
+				<interceptor-ref name="defaultStack"/>
+			</interceptor-stack>
+		</interceptors>
+		<!-- 所有Action请求使用dangStack -->
+		<default-interceptor-ref name="dangStack"/>
+		
+		<!-- 定义共通的拦截器,Result和Action组件 -->
+	<!-- 	<global-results>
+			<result name="error">
+				/error.jsp
+			</result>
+		</global-results>
+		<global-exception-mappings>
+			<exception-mapping exception="java.lang.Exception" result="error"/>
+		</global-exception-mappings>	 -->
+	</package>
+</struts>

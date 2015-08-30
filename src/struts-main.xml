@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+    "http://struts.apache.org/dtds/struts-2.1.7.dtd">
+<struts>
+	<package name="main" namespace="/main" extends="dang-Default">
+		<!-- 定义产品浏览相关的Action -->
+		<action name="new" class="com.tarena.dang.action.main.NewAction">
+			<param name="size">8</param>
+			<result>/main/new.jsp</result>
+		</action>		
+		<!-- 主页面左侧类别显示 -->
+		<action name="category" class="com.tarena.dang.action.main.CategoryAction">
+			<result>/main/category.jsp</result>
+		</action>
+		<!-- 类别浏览页面 -->
+		<action name="booklist" class="com.tarena.dang.action.main.BookListAction">
+			<param name="size">3</param>
+			<result>/main/book_list.jsp</result>
+		</action>
+		<!-- 中间的编辑推荐 -->
+		<action name="recommend" class="com.tarena.dang.action.main.RecommendAction">
+			<result>/main/recommend.jsp</result>
+		</action>
+		<!-- 中间的热销图书 -->
+		<action name="hot" class="com.tarena.dang.action.main.HotAction">
+			<param name="size">8</param>
+			<result>/main/hot.jsp</result>
+		</action>
+		<!-- 右侧的新书热卖榜 -->
+		<action name="newhot" class="com.tarena.dang.action.main.NewHotAction">
+			<param name="size">8</param>
+			<param name="month">1</param>
+			<result>/main/newhot.jsp</result>
+		</action>
+		<!-- 书的详细信息 -->
+		<action name="product" class="com.tarena.dang.action.main.ProudctAction">
+			<result>/main/product.jsp</result>
+		</action>
+		
+	</package>
+</struts>

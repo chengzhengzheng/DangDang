@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+    "http://struts.apache.org/dtds/struts-2.1.7.dtd">
+<struts>
+	<package name="cart" namespace="/cart" extends="dang-Default">
+		<!-- 定义购物车处理的Action -->
+		<!-- buy -->
+		<action name="buy" class="com.tarena.dang.action.cart.BuyAction">
+			<result name="success" type="json">
+				<param name="root">ok</param>
+			</result>
+		</action>
+		<!-- list -->
+		<action name="cartlist" class="com.tarena.dang.action.cart.CartListAction">
+			<result name="list">/cart/cart_list.jsp</result>
+		</action>
+		<!-- update -->
+		<!-- <action name="update" class="com.tarena.dang.action.cart.UpdateAction">
+			<result name="list" type="redirect">/cart/cartlist.action</result>
+		</action>
+		delete
+		<action name="delete" class="com.tarena.dang.action.cart.DeleteAction">
+			<result name="list" type="redirect">/cart/cartlist.action</result>
+		</action>
+		recovery
+		<action name="recovery" class="com.tarena.dang.action.cart.RecoveryAction">
+			<result name="list" type="redirect">/cart/cartlist.action</result>
+		</action> -->
+	</package>
+</struts>

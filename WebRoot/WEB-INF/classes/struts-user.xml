@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+    "http://struts.apache.org/dtds/struts-2.1.7.dtd">
+<struts>
+	<package name="user" namespace="/user" extends="dang-Default">
+		<!-- 定义用户管理的Action -->
+		<action name="register" class="com.tarena.dang.action.user.RegisterAction">
+			<result name="verify">/user/verify_form.jsp</result>
+		</action>
+		<!-- 验证码 -->
+		<action name="image" class="com.tarena.dang.action.user.ImageAction">
+			<result name="success" type="stream">
+				<param name="inputName">
+					imageStream
+				</param>
+			</result>
+		</action>
+		<!-- ajax校验验证码 -->
+		<action name="valid" class="com.tarena.dang.action.user.ValidAction">
+			<result name="success" type="json">
+				<param name="root">ok</param>
+			</result>
+		</action>
+		<!-- ajax校验邮箱是否可用 -->
+		<action name="validEmail" class="com.tarena.dang.action.user.ValidEmailAction">
+			<result name="success" type="json">
+				<param name="root">ok</param>
+			</result>
+		</action>
+		<!-- 校验邮箱验证码 -->
+		<action name="validEmailVerifyCode" class="com.tarena.dang.action.user.ValidEmailVerifyCodeAction">
+			<result name="success">/user/register_ok.jsp</result>
+			<result name="error">/user/verify_form.jsp</result>
+		</action>
+		<!-- 登录 -->
+		<action name="login" class="com.tarena.dang.action.user.LoginAction">
+			<result name="success"  type="redirect">/main/main.jsp</result>
+			<result name="verify">/user/verify_form.jsp</result>
+			<result name="error">/user/login_form.jsp</result>
+		</action>
+		<!-- 登出 -->
+		<action name="exit" class="com.tarena.dang.action.user.ExitAction">
+			<result name="success"  type="redirect">/main/main.jsp</result>
+		</action>
+	</package>
+</struts>

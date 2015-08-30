@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+    "http://struts.apache.org/dtds/struts-2.1.7.dtd">
+<struts>
+	<package name="order" namespace="/order" extends="dang-Default">
+		<interceptors>
+			<interceptor name="checklogin" class="com.tarena.dang.interceptor.CheckLoginInterceptor"/>
+			<interceptor-stack name="checkloginStack">
+				<interceptor-ref name="dangStack"/>
+				<interceptor-ref name="checklogin"/>
+			</interceptor-stack>
+		</interceptors>
+		<!-- 定义订单处理的Action -->
+		<!-- 确定订单 -->
+		<action name="orderConfirm" class="com.tarena.dang.action.order.ConfirmAction">
+			<interceptor-ref name="checkloginStack"/>
+			<result name="login">/user/login_form.jsp</result>
+			<result name="success">/order/order_info.jsp</result>
+		</action>
+		<!-- 收获地址 -->
+		<action name="address" class="com.tarena.dang.action.order.AddressAction">
+		 	<interceptor-ref name="checkloginStack"/>
+			<result name="login">/user/login_form.jsp</result>
+			<result name="success">/order/address_form.jsp</result>
+		</action>
+		<!-- 显示旧地址 -->
+		<action name="showaddress" class="com.tarena.dang.action.order.ShowAddressAction">
+			<interceptor-ref name="checkloginStack"/>
+			<result name="login">/user/login_form.jsp</result>
+			<result name="success" type="json">
+				<param name="root">address</param>
+			</result>
+		</action>
+		<!-- 提交订单 -->
+		<action name="orderOK" class="com.tarena.dang.action.order.OrderOKAction">
+		 	<interceptor-ref name="checkloginStack"/>
+			<result name="login">/user/login_form.jsp</result>
+			<result name="success">/order/order_ok.jsp</result>
+		</action>
+		<!-- 查看订单 -->
+		<action name="lookorder" class="com.tarena.dang.action.order.LookOrderAction">
+			 <interceptor-ref name="checkloginStack"/>
+			 <result name="login">/user/login_form.jsp</result>
+			<result name="success">/order/order.jsp</result>
+		</action>
+	</package>
+</struts>
